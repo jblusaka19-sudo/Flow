@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useTheme } from './context/ThemeContext';
 import { Header } from './components/Header';
 import { InputCard } from './components/InputCard';
@@ -10,7 +10,11 @@ import { ComparisonView } from './components/ComparisonView';
 import { ScenarioButtons } from './components/ScenarioButtons';
 import { ExportButtons } from './components/ExportButtons';
 import { Footer } from './components/Footer';
+import { QuickFill } from './components/QuickFill';
+import { HistoryPanel } from './components/HistoryPanel';
+import { ClearButton } from './components/ClearButton';
 import { calculateLOS } from './utils/calculations';
+import { saveToHistory } from './utils/storage';
 
 export default function App() {
   const { isDarkMode } = useTheme();
@@ -21,13 +25,32 @@ export default function App() {
   const [receivedStock, setReceivedStock] = useState<string>('');
 
   const result = useMemo(() => {
-    return calculateLOS({
-      sellOutHl: parseFloat(sellOutHl) || 0,
-      sellInHl: parseFloat(sellInHl) || 0,
-      desiredLos: parseFloat(desiredLos) || 0,
-      pendingOrders: parseFloat(pendingOrders) || 0,
-      receivedStock: parseFloat(receivedStock) || 0,
-    });
+    try {
+      return calculateLOS({
+        sellOutHl: parseFloat(sellOutHl) || 0,
+        sellInHl: parseFloat(sellInHl) || 0,
+        desiredLos: parseFloat(desiredLos) || 0,
+        pendingOrders: parseFloat(pendingOrders) || 0,
+        receivedStock: parseFloat(receivedStock) || 0,
+      });
+    } catch (error) {
+      console.error('Calculation error:', error);
+      return {
+        currentLos: 0,
+        sellOutCases: 0,
+        sellInCases: 0,
+        casesNeeded: 0,
+        newSellOutHl: 0,
+        newSellOutCases: 0,
+        losAfterSelling: 0,
+        newSellInHl: 0,
+        newSellInCases: 0,
+        losAfterReceiving: 0,
+        adjustedSellOut: 0,
+        predictedLos: 0,
+        losStatus: 'optimal' as const,
+      };
+    }
   }, [sellOutHl, sellInHl, desiredLos, pendingOrders, receivedStock]);
 
   const hasValidInputs = sellOutHl && sellInHl && desiredLos;
@@ -38,6 +61,39 @@ export default function App() {
     setPendingOrders((current + cases).toString());
   };
 
+  const handleQuickFill = (sellOut: string, sellIn: string, desired: string) => {
+    setSellOutHl(sellOut);
+    setSellInHl(sellIn);
+    setDesiredLos(desired);
+    setPendingOrders('');
+    setReceivedStock('');
+  };
+
+  const handleLoadHistory = (sellOut: string, sellIn: string, desired: string) => {
+    setSellOutHl(sellOut);
+    setSellInHl(sellIn);
+    setDesiredLos(desired);
+  };
+
+  const handleClearAll = () => {
+    setSellOutHl('');
+    setSellInHl('');
+    setDesiredLos('');
+    setPendingOrders('');
+    setReceivedStock('');
+  };
+
+  useEffect(() => {
+    if (hasValidInputs && result.currentLos > 0) {
+      saveToHistory({
+        sellOutHl: parseFloat(sellOutHl),
+        sellInHl: parseFloat(sellInHl),
+        desiredLos: parseFloat(desiredLos),
+        currentLos: result.currentLos,
+      });
+    }
+  }, [hasValidInputs, sellOutHl, sellInHl, desiredLos, result.currentLos]);
+
   return (
     <div className={`min-h-screen transition-colors duration-500 ${
       isDarkMode
@@ -47,9 +103,21 @@ export default function App() {
       <Header />
 
       <main className="max-w-6xl mx-auto px-4 py-8 sm:py-12">
-        {!hasValidInputs && !showCurrentLos && <InfoCard />}
+        {!hasValidInputs && !showCurrentLos && (
+          <>
+            <InfoCard />
+            <div className="mt-6">
+              <QuickFill onFill={handleQuickFill} />
+            </div>
+          </>
+        )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 mt-8">
+        <div className="flex justify-between items-center mb-4">
+          <ClearButton onClear={handleClearAll} />
+          <HistoryPanel onLoadHistory={handleLoadHistory} />
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
           {/* Left Column - Inputs */}
           <div className="lg:col-span-2 space-y-6 sm:space-y-8">
             <InputCard

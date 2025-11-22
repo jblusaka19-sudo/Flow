@@ -27,7 +27,7 @@ export interface LOSResult {
 export function calculateLOS(data: LOSData): LOSResult {
   const { sellOutHl, sellInHl, desiredLos, pendingOrders, receivedStock } = data;
 
-  if (!sellOutHl || !sellInHl || sellInHl === 0) {
+  if (!sellOutHl || !sellInHl || sellInHl === 0 || isNaN(sellOutHl) || isNaN(sellInHl)) {
     return getEmptyResult();
   }
 
@@ -39,36 +39,39 @@ export function calculateLOS(data: LOSData): LOSResult {
   let newSellOutHl = sellOutHl;
   let losAfterSelling = currentLos;
 
-  if (desiredLos > 0) {
+  if (desiredLos > 0 && !isNaN(desiredLos)) {
     casesNeeded = (desiredLos * sellInCases) / 100 - sellOutCases;
     newSellOutHl = (casesNeeded * HECTOLITER_TO_CASE) + sellOutHl;
-    losAfterSelling = (newSellOutHl / sellInHl) * 100;
+    losAfterSelling = sellInHl > 0 ? (newSellOutHl / sellInHl) * 100 : 0;
   }
 
   const newSellOutCases = newSellOutHl / HECTOLITER_TO_CASE;
 
-  const newSellInHl = receivedStock > 0 ? (receivedStock * HECTOLITER_TO_CASE) + sellInHl : sellInHl;
+  const safeReceivedStock = isNaN(receivedStock) ? 0 : receivedStock;
+  const safePendingOrders = isNaN(pendingOrders) ? 0 : pendingOrders;
+
+  const newSellInHl = safeReceivedStock > 0 ? (safeReceivedStock * HECTOLITER_TO_CASE) + sellInHl : sellInHl;
   const newSellInCases = newSellInHl / HECTOLITER_TO_CASE;
   const losAfterReceiving = newSellInHl > 0 ? (sellOutHl / newSellInHl) * 100 : 0;
 
-  const adjustedSellOut = sellOutCases + pendingOrders;
+  const adjustedSellOut = sellOutCases + safePendingOrders;
   const predictedLos = sellInCases > 0 ? (adjustedSellOut / sellInCases) * 100 : 0;
 
   const losStatus = getLosStatus(currentLos);
 
   return {
-    currentLos: isFinite(currentLos) ? currentLos : 0,
-    sellOutCases,
-    sellInCases,
-    casesNeeded: isFinite(casesNeeded) ? casesNeeded : 0,
-    newSellOutHl: isFinite(newSellOutHl) ? newSellOutHl : sellOutHl,
-    newSellOutCases: isFinite(newSellOutCases) ? newSellOutCases : 0,
-    losAfterSelling: isFinite(losAfterSelling) ? losAfterSelling : 0,
-    newSellInHl,
-    newSellInCases,
-    losAfterReceiving: isFinite(losAfterReceiving) ? losAfterReceiving : 0,
-    adjustedSellOut: isFinite(adjustedSellOut) ? adjustedSellOut : 0,
-    predictedLos: isFinite(predictedLos) ? predictedLos : 0,
+    currentLos: isFinite(currentLos) && !isNaN(currentLos) ? currentLos : 0,
+    sellOutCases: isFinite(sellOutCases) && !isNaN(sellOutCases) ? sellOutCases : 0,
+    sellInCases: isFinite(sellInCases) && !isNaN(sellInCases) ? sellInCases : 0,
+    casesNeeded: isFinite(casesNeeded) && !isNaN(casesNeeded) ? casesNeeded : 0,
+    newSellOutHl: isFinite(newSellOutHl) && !isNaN(newSellOutHl) ? newSellOutHl : sellOutHl,
+    newSellOutCases: isFinite(newSellOutCases) && !isNaN(newSellOutCases) ? newSellOutCases : 0,
+    losAfterSelling: isFinite(losAfterSelling) && !isNaN(losAfterSelling) ? losAfterSelling : 0,
+    newSellInHl: isFinite(newSellInHl) && !isNaN(newSellInHl) ? newSellInHl : sellInHl,
+    newSellInCases: isFinite(newSellInCases) && !isNaN(newSellInCases) ? newSellInCases : 0,
+    losAfterReceiving: isFinite(losAfterReceiving) && !isNaN(losAfterReceiving) ? losAfterReceiving : 0,
+    adjustedSellOut: isFinite(adjustedSellOut) && !isNaN(adjustedSellOut) ? adjustedSellOut : 0,
+    predictedLos: isFinite(predictedLos) && !isNaN(predictedLos) ? predictedLos : 0,
     losStatus,
   };
 }
