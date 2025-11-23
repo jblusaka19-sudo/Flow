@@ -10,7 +10,6 @@ import { ComparisonView } from './components/ComparisonView';
 import { ScenarioButtons } from './components/ScenarioButtons';
 import { ExportButtons } from './components/ExportButtons';
 import { Footer } from './components/Footer';
-import { QuickFill } from './components/QuickFill';
 import { HistoryPanel } from './components/HistoryPanel';
 import { ClearButton } from './components/ClearButton';
 import { calculateLOS } from './utils/calculations';
@@ -61,14 +60,6 @@ export default function App() {
     setPendingOrders((current + cases).toString());
   };
 
-  const handleQuickFill = (sellOut: string, sellIn: string, desired: string) => {
-    setSellOutHl(sellOut);
-    setSellInHl(sellIn);
-    setDesiredLos(desired);
-    setPendingOrders('');
-    setReceivedStock('');
-  };
-
   const handleLoadHistory = (sellOut: string, sellIn: string, desired: string) => {
     setSellOutHl(sellOut);
     setSellInHl(sellIn);
@@ -103,14 +94,7 @@ export default function App() {
       <Header />
 
       <main className="max-w-6xl mx-auto px-4 py-8 sm:py-12">
-        {!hasValidInputs && !showCurrentLos && (
-          <>
-            <InfoCard />
-            <div className="mt-6">
-              <QuickFill onFill={handleQuickFill} />
-            </div>
-          </>
-        )}
+        {!hasValidInputs && !showCurrentLos && <InfoCard />}
 
         <div className="flex justify-between items-center mb-4">
           <ClearButton onClear={handleClearAll} />

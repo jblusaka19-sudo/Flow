@@ -68,7 +68,8 @@ export function ComparisonView({ result, desiredLos }: ComparisonViewProps) {
           return (
             <div
               key={idx}
-              className={`p-4 rounded-lg border-2 transition-all ${isDarkMode ? 'bg-slate-700/50' : status.color}`}
+              className={`p-4 rounded-lg border-2 transition-all animate-slideUp hover:shadow-lg ${isDarkMode ? 'bg-slate-700/50 hover:border-cyan-400/50' : status.color}`}
+              style={{ animationDelay: `${idx * 0.1}s` }}
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">

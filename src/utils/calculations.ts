@@ -40,8 +40,10 @@ export function calculateLOS(data: LOSData): LOSResult {
   let losAfterSelling = currentLos;
 
   if (desiredLos > 0 && !isNaN(desiredLos)) {
-    casesNeeded = (desiredLos * sellInCases) / 100 - sellOutCases;
-    newSellOutHl = (casesNeeded * HECTOLITER_TO_CASE) + sellOutHl;
+    const targetSellOutHl = (sellInHl * desiredLos) / 100;
+    const additionalHlNeeded = targetSellOutHl - sellOutHl;
+    casesNeeded = additionalHlNeeded / HECTOLITER_TO_CASE;
+    newSellOutHl = sellOutHl + additionalHlNeeded;
     losAfterSelling = sellInHl > 0 ? (newSellOutHl / sellInHl) * 100 : 0;
   }
 

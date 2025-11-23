@@ -12,7 +12,7 @@ export function LOSProgressBar({ currentLos, desiredLos, status }: LOSProgressBa
   const gradientClass = getStatusColor(status);
 
   return (
-    <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl p-6 sm:p-8 border border-cyan-100 animate-slideUp">
+    <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl p-6 sm:p-8 border border-cyan-100 animate-slideUp hover:shadow-2xl transition-shadow duration-300">
       <div className="mb-6">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-bold text-slate-900">Coverage Status</h3>
@@ -52,19 +52,19 @@ export function LOSProgressBar({ currentLos, desiredLos, status }: LOSProgressBa
       <div>
         <p className="text-xs font-semibold text-slate-700 uppercase tracking-wide mb-3">Performance Zones</p>
         <div className="grid grid-cols-4 gap-2 text-xs">
-          <div className="text-center p-2 rounded-lg bg-red-50 border border-red-100 hover:shadow-md transition-shadow">
+          <div className="text-center p-2 rounded-lg bg-red-50 border border-red-100 hover:shadow-md transition-all hover:scale-105 duration-200 animate-slideUp" style={{ animationDelay: '0s' }}>
             <div className="text-red-600 font-semibold">Critical</div>
             <div className="text-slate-500">&lt;93%</div>
           </div>
-          <div className="text-center p-2 rounded-lg bg-green-50 border border-green-100 hover:shadow-md transition-shadow">
+          <div className="text-center p-2 rounded-lg bg-green-50 border border-green-100 hover:shadow-md transition-all hover:scale-105 duration-200 animate-slideUp" style={{ animationDelay: '0.1s' }}>
             <div className="text-green-600 font-semibold">Optimal</div>
             <div className="text-slate-500">93–103%</div>
           </div>
-          <div className="text-center p-2 rounded-lg bg-orange-50 border border-orange-100 hover:shadow-md transition-shadow">
+          <div className="text-center p-2 rounded-lg bg-orange-50 border border-orange-100 hover:shadow-md transition-all hover:scale-105 duration-200 animate-slideUp" style={{ animationDelay: '0.2s' }}>
             <div className="text-orange-600 font-semibold">Caution</div>
             <div className="text-slate-500">103–105%</div>
           </div>
-          <div className="text-center p-2 rounded-lg bg-cyan-50 border border-cyan-100 hover:shadow-md transition-shadow">
+          <div className="text-center p-2 rounded-lg bg-cyan-50 border border-cyan-100 hover:shadow-md transition-all hover:scale-105 duration-200 animate-slideUp" style={{ animationDelay: '0.3s' }}>
             <div className="text-cyan-600 font-semibold">High</div>
             <div className="text-slate-500">&gt;105%</div>
           </div>

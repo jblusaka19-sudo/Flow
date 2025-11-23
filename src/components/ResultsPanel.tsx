@@ -66,17 +66,18 @@ export function ResultsPanel({ result }: ResultsPanelProps) {
     },
   ];
 
-  const StatCard = ({ stat }: { stat: typeof currentStats[0] }) => (
+  const StatCard = ({ stat, index }: { stat: typeof currentStats[0]; index?: number }) => (
     <div
-      className={`p-4 rounded-lg border-2 transition-all hover:shadow-md ${
+      className={`p-4 rounded-lg border-2 transition-all hover:shadow-md animate-slideUp ${
         stat.highlight
           ? isDarkMode
-            ? 'bg-gradient-to-br from-slate-700 to-slate-600 border-cyan-500/30 shadow-md'
-            : 'bg-gradient-to-br from-cyan-50 to-teal-50 border-cyan-300 shadow-md'
+            ? 'bg-gradient-to-br from-slate-700 to-slate-600 border-cyan-500/30 shadow-md hover:shadow-lg hover:shadow-cyan-500/20'
+            : 'bg-gradient-to-br from-cyan-50 to-teal-50 border-cyan-300 shadow-md hover:shadow-lg hover:shadow-cyan-300/30'
           : isDarkMode
           ? 'bg-slate-700/50 border-slate-600 hover:border-slate-500'
           : 'bg-slate-50 border-slate-200 hover:border-slate-300'
       }`}
+      style={{ animationDelay: `${(index || 0) * 0.1}s` }}
     >
       <p className={`text-xs font-semibold uppercase tracking-wide mb-1 ${
         isDarkMode ? 'text-slate-400' : 'text-slate-600'
@@ -117,7 +118,7 @@ export function ResultsPanel({ result }: ResultsPanelProps) {
         }`}>Today's Metrics</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {currentStats.map((stat, idx) => (
-            <StatCard key={idx} stat={stat} />
+            <StatCard key={idx} stat={stat} index={idx} />
           ))}
         </div>
       </div>
@@ -128,7 +129,7 @@ export function ResultsPanel({ result }: ResultsPanelProps) {
         }`}>Selling Scenario</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {sellingStats.map((stat, idx) => (
-            <StatCard key={idx} stat={stat} />
+            <StatCard key={idx} stat={stat} index={idx} />
           ))}
         </div>
       </div>
@@ -139,7 +140,7 @@ export function ResultsPanel({ result }: ResultsPanelProps) {
         }`}>Receiving Scenario</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {receivingStats.map((stat, idx) => (
-            <StatCard key={idx} stat={stat} />
+            <StatCard key={idx} stat={stat} index={idx} />
           ))}
         </div>
       </div>
