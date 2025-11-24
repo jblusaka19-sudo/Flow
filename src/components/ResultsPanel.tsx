@@ -1,6 +1,7 @@
 import { TrendingUp } from 'lucide-react';
 import { LOSResult } from '../utils/calculations';
 import { useTheme } from '../context/ThemeContext';
+import { AnimatedCounter } from './AnimatedCounter';
 
 interface ResultsPanelProps {
   result: LOSResult;
@@ -87,7 +88,11 @@ export function ResultsPanel({ result }: ResultsPanelProps) {
           ? isDarkMode ? 'text-cyan-400' : 'text-cyan-700'
           : isDarkMode ? 'text-slate-100' : 'text-slate-900'
       }`}>
-        {stat.value}
+        <AnimatedCounter
+          value={parseFloat(stat.value)}
+          decimals={stat.value.includes('.') ? 2 : 0}
+          duration={600}
+        />
       </p>
       <p className={`text-xs mt-1 ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>{stat.unit}</p>
     </div>

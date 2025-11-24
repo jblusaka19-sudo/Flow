@@ -12,6 +12,8 @@ import { ExportButtons } from './components/ExportButtons';
 import { Footer } from './components/Footer';
 import { HistoryPanel } from './components/HistoryPanel';
 import { ClearButton } from './components/ClearButton';
+import { SmartInsights } from './components/SmartInsights';
+import { AnimatedCounter } from './components/AnimatedCounter';
 import { calculateLOS } from './utils/calculations';
 import { saveToHistory } from './utils/storage';
 
@@ -159,6 +161,13 @@ export default function App() {
           {/* Right Column - Suggestions */}
           {hasValidInputs && (
             <div className="lg:col-span-1 space-y-6 sm:space-y-8">
+              <SmartInsights
+                result={result}
+                desiredLos={parseFloat(desiredLos) || 0}
+                sellOutHl={parseFloat(sellOutHl) || 0}
+                sellInHl={parseFloat(sellInHl) || 0}
+              />
+
               <SmartSuggestions
                 status={result.losStatus}
                 currentLos={result.currentLos}
@@ -168,22 +177,36 @@ export default function App() {
               <div className="bg-gradient-to-br from-slate-800 to-slate-900 text-slate-100 rounded-xl shadow-xl p-6 space-y-4 animate-slideUp border border-slate-700">
                 <h3 className="text-lg font-bold text-cyan-300">Key Metrics</h3>
                 <div className="space-y-3">
-                  <div className="bg-slate-700/30 rounded-lg p-3">
+                  <div className="bg-slate-700/30 rounded-lg p-3 hover:bg-slate-700/50 transition-all">
                     <p className="text-sm text-slate-400">Current LOS</p>
                     <p className="text-2xl font-bold text-cyan-400">
-                      {result.currentLos.toFixed(2)}%
+                      <AnimatedCounter
+                        value={result.currentLos}
+                        decimals={2}
+                        duration={700}
+                        suffix="%"
+                      />
                     </p>
                   </div>
-                  <div className="bg-slate-700/30 rounded-lg p-3">
+                  <div className="bg-slate-700/30 rounded-lg p-3 hover:bg-slate-700/50 transition-all">
                     <p className="text-sm text-slate-400">Predicted LOS</p>
                     <p className="text-2xl font-bold text-teal-400">
-                      {result.predictedLos.toFixed(2)}%
+                      <AnimatedCounter
+                        value={result.predictedLos}
+                        decimals={2}
+                        duration={700}
+                        suffix="%"
+                      />
                     </p>
                   </div>
-                  <div className="bg-slate-700/30 rounded-lg p-3">
+                  <div className="bg-slate-700/30 rounded-lg p-3 hover:bg-slate-700/50 transition-all">
                     <p className="text-sm text-slate-400">Cases to Target</p>
                     <p className="text-2xl font-bold text-amber-400">
-                      {result.casesNeeded.toFixed(0)}
+                      <AnimatedCounter
+                        value={result.casesNeeded}
+                        decimals={0}
+                        duration={700}
+                      />
                     </p>
                   </div>
                 </div>

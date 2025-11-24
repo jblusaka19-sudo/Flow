@@ -1,4 +1,5 @@
 import { getStatusColor, getStatusTextColor } from '../utils/calculations';
+import { AnimatedCounter } from './AnimatedCounter';
 
 interface LOSProgressBarProps {
   currentLos: number;
@@ -18,7 +19,12 @@ export function LOSProgressBar({ currentLos, desiredLos, status }: LOSProgressBa
           <h3 className="text-lg font-bold text-slate-900">Coverage Status</h3>
           <div className="text-right">
             <div className={`text-3xl font-bold ${textColor}`}>
-              {currentLos.toFixed(2)}%
+              <AnimatedCounter
+                value={currentLos}
+                decimals={2}
+                duration={700}
+                suffix="%"
+              />
             </div>
             {desiredLos > 0 && (
               <div className="text-xs text-slate-500">Target: {desiredLos.toFixed(2)}%</div>
